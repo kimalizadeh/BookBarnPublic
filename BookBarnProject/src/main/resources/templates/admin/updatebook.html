@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8">
+    <title>Update Book</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Admin')"  th:replace="fragment/header_auth_admin :: header"></nav>
+
+<div class="container">
+    <h2>Update Book</h2>
+    <hr/>
+    <form th:object="${updateBookModel}" th:action="@{/admin/updateBook}" method="POST"  enctype="multipart/form-data">
+
+        <label >Title:</label>
+        <input type="text" th:field="*{title}" placeholder="Enter title" class="form-control col-4 mb-4"/>
+        <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+
+        <label >ISBN:</label>
+        <input type="text" th:field="*{isbn}" placeholder="Enter ISBN" class="form-control col-4 mb-4"/>
+        <div class="text-danger" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
+
+        <label >Author:</label>
+        <input type="text" th:field="*{authorFullName}" placeholder="Enter author" class="form-control col-4 mb-4"/>
+        <div class="text-danger" th:if="${#fields.hasErrors('authorFullName')}" th:errors="*{authorFullName}"></div>
+
+        <label >Description:</label>
+        <textarea th:field="*{description}" placeholder="Enter book description here" class="form-control col-4 mb-4"/>
+        <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+
+        <label >Category: </label>
+        <select th:field="*{category}" class="form-control col-4 mb-4">
+            <option th:value="NONFICTION" th:text="NONFICTION">Non-Fiction</option>
+            <option th:value="FICTION" th:text="FICTION">Fiction</option>
+            <option th:value="SCIENCE" th:text="SCIENCE">Science</option>
+            <option th:value="ART" th:text="ART">Art</option>
+        </select>
+
+        <label >Publication Date:</label>
+        <input type="date" th:field="*{publicationDate}" class="form-control col-4 mb-4">
+        <div class="text-danger" th:if="${#fields.hasErrors('publicationDate')}" th:errors="*{publicationDate}"></div>
+
+        <label >Book Type: </label>
+        <select th:field="*{bookType}" class="form-control col-4 mb-4">
+            <option th:value="PAPER" th:text="Paper">Paper</option>
+            <option th:value="EBOOK" th:text="E-Book">E-Book</option>
+        </select>
+
+        <label>Update Photo file. If box not checked no changes will be made</label>
+        <input type="checkbox" name="updateCoverPhoto" th:field="*{updateCoverPhoto}" value="true"></br>
+
+        <label >Cover Photo: </label>
+        <input type="file" class="form-control col-4 mb-4" accept="image/jpeg" name="coverPhoto"/>
+        <div class="text-danger" th:if="${#fields.hasErrors('coverPhoto')}" th:errors="*{coverPhoto}"></div>
+
+        <label>Update E-Book file. If box not checked no changes will be made</label>
+        <input type="checkbox" th:field="*{updatePdf}" value="true"></br>
+
+        <label >E-Book File: </label>
+        <input type="file" class="form-control col-4 mb-4" accept="application/pdf" name="ebookFile"/>
+        <div class="text-danger" th:if="${#fields.hasErrors('pdf')}" th:errors="*{pdf}"></div>
+
+
+        <input type="hidden" th:field="*{id}">
+        <button class="btn btn-primary" type="submit">Update Book</button>
+    </form>
+</div>
+</body>
+</html>

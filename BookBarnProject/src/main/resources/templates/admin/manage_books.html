@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Rental</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:replace="fragment/header_auth_admin :: header">
+</nav>
+<div class="container">
+    <h2>Manage Books</h2>
+    <hr/>
+    <div class="text-danger">[[${error}]]</div>
+
+    <h4 class="text-success" th:text="${bookUpdated}"></h4>
+    <h4 class="text-success" th:text="${bookAdded}"></h4>
+    <h4 class="text-success" th:text="${bookDeleted}"></h4>
+    <!--<p sec:authorize="isAuthenticated()">You are logged in as  <span th:text="${#authentication.name}+'&nbsp'" /></p>-->
+    <div class="row">
+        <div class="col">
+
+            <div>
+                <form th:action="@{/admin/page/1}">
+                    <input type="hidden" name="sortField" th:value="${sortField}"/>
+                    <input type="hidden" name="sortDir" th:value="${sortDir}"/>
+                    <label>Keyword:</label>
+                    <input type="text" id="keyword" name="keyword" required/>
+                    <div id="error" class="text-danger"></div>
+                    &nbsp;
+                    <input type="submit" value="Search" id="submit" class="btn btn-primary"/>
+                    &nbsp;
+                    <input type="button" value="Clear" class="btn btn-primary" onclick="clearFilter()"/>
+                </form>
+            </div>
+            <hr/>
+            <a th:href="@{/admin/addBook}" class="btn btn-primary mb-2">Add Book</a>
+            <h4 class="text-danger text-center" th:text="${bookNotDeleted}"></h4>
+            <table class="table table-bordered table-striped" id="usersTable">
+                <thead>
+                <tr>
+                    <th>Cover Photo</th>
+                    <th><a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=title&sortDir=' + ${reverseSortDir}}">Title</a>
+                    </th>
+                    <th><a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=isbn&sortDir=' + ${reverseSortDir}}">ISBN</a>
+                    </th>
+                    <th>
+                        <a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=authorFullName&sortDir=' + ${reverseSortDir}}">Author</a>
+                    </th>
+                    <th><a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=category&sortDir=' + ${reverseSortDir}}">Category</a>
+                    </th>
+                    <th><a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=bookType&sortDir=' + ${reverseSortDir}}">Book
+                        Type</a></th>
+                    <th><a th:href="@{'/admin/page/' + ${currentPage} + '?sortField=publicationDate&sortDir=' + ${reverseSortDir}}">Publication Date</a>
+                    </th>
+                    <th> Description</th>
+                    <th>Availability</th>
+                    <th> Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book: ${bookList}">
+                    <td><img th:if="*{book.parsedData != null and #strings.length(book.parsedData) > 0}"
+                             th:src="@{'data:image/jpeg;base64,'+${book.parsedData}}" width="200"/>
+                        <img th:unless="*{book.parsedData != null and #strings.length(book.parsedData) > 0}"
+                             th:src="@{/images/coverphoto.jpg}" width="200"/>
+                    </td>
+                    <td th:text="${book.title}"></td>
+                    <td th:text="${book.isbn}"></td>
+                    <td th:text="${book.authorFullName}"></td>
+                    <td th:text="${book.category}"></td>
+                    <td th:text="${book.bookType}"></td>
+                    <td th:text="${book.publicationDate}"></td>
+                    <td th:text="${book.description}"></td>
+                    <td th:if="${book.isAvailable()}">Available</td>
+                    <td th:unless="${book.isAvailable()}">Unavailable</td>
+                    <td>
+                        <a th:href="@{/admin/updateBook(bookId=${book.id})}" class="btn btn-info">Update</a>
+                            &nbsp;
+                        <a th:href="@{/admin/deleteBook(bookId=${book.id})}" class="btn btn-danger ml-2">Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center" style="text-align: center; margin: auto ">
+            Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]] &nbsp;
+
+            <a th:if="${currentPage > 1}" th:href="@{'/admin/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a>
+            <span th:unless="${currentPage > 1}">First</span>
+
+            <a th:if="${currentPage > 1}"
+               th:href="@{'/admin/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
+            <span th:unless="${currentPage > 1}">Previous</span>
+
+            <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${i != currentPage && i != 0}"
+                           th:href="@{'/admin/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+                        <span th:unless="${i != currentPage && i != 0}">[[${i}]]</span>
+                        &nbsp;&nbsp;
+                    </span>
+
+            <a th:if="${currentPage < totalPages}"
+               th:href="@{'/admin/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+            <span th:unless="${currentPage < totalPages}">Next</span>
+
+            <a th:if="${currentPage < totalPages}"
+               th:href="@{'/admin/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+            <span th:unless="${currentPage < totalPages}">Last</span>
+
+        </div>
+    </div>
+    <!--<div style="margin-top: auto" th:replace="fragment/header_auth_admin :: footer"></div>-->
+
+</div>
+
+<script type="text/javascript">
+
+    function clearFilter() {
+        window.location = '/admin/manageBooks';
+    }
+
+    document.querySelector("#submit").addEventListener("click", function(event) {
+
+
+
+        var keyword = document.getElementById("keyword").value;
+        let result = keyword.includes(" ");
+
+        if(result) {
+            document.getElementById('error').innerHTML += 'keyword cannot contain spaces';
+            event.preventDefault();
+        }
+
+    }, false);
+
+
+</script>
+
+</body>
+</html>

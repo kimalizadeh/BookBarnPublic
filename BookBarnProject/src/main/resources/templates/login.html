@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:replace="fragment/header_anonymous :: header">
+</nav>
+<div class="container center_div">
+    <h2>Login</h2>
+    <hr/>
+    <h4 th:text="${userCreated}"></h4>
+    <div class="text-danger" th:if="${loginError}" >Invalid username or password</div>
+    <form th:action="@{/login}" method="POST">
+
+        Username<input type="text" id="username" name="username" placeholder="Enter username" class="form-control col-4 mb-4"/>
+        Password<input type="password" id="password" name="password" placeholder="Enter password" class="form-control col-4 mb-4"/>
+        <button class="btn btn-primary" type="submit">Login</button>
+
+    </form>
+</div>
+<!--<div style="margin-top: auto" th:replace="fragment/header_anonymous :: footer"></div>=-->
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Rental</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Admin')"  th:replace="fragment/header_auth_admin :: header"></nav>
+
+    <div class="container">
+
+        <h2>Add Rental</h2>
+        <hr/>
+        <h4 th:text="${bookUnavailable}"></h4>
+        <h4 th:text="${addRentalModel.title}"></h4>
+        <p th:text="${addRentalModel.authorFullName}"></p>
+        <p>ISBN: <span th:text="${addRentalModel.isbn}"></span></p>
+
+        <form method="POST" th:object="${addRentalModel}" th:action="@{/admin/addRental}">
+
+            <label >Username:</label>
+            <input type="text" th:field="*{username}" placeholder="Enter username" class="form-control col-4 mb-4"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+
+            <input type="hidden" th:field="*{isbn}" placeholder="Enter ISBN" class="form-control col-4 mb-4"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
+
+            <label >Start Date:</label>
+            <input type="date" th:field="*{startDate}" class="form-control col-4 mb-4">
+            <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+
+            <label >Due Date:</label>
+            <input type="date" th:field="*{dueDate}" class="form-control col-4 mb-4">
+            <div class="text-danger" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}"></div>
+
+            <input type="hidden" th:field="*{bookId}" placeholder="Enter name" class="form-control col-4 mb-4"/>
+
+            <button class="btn btn-primary" type="submit">Add Rental</button>
+        </form>
+
+    </div>
+
+
+
+</body>
+</html>

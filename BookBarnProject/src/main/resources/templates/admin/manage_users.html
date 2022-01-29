@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:replace="fragment/header_auth_admin :: header">
+</nav>
+<div class="container">
+    <h2>Manage Users</h2>
+    <h4 class="text-success" th:text="${userCreated}"></h4>
+    <h4 class="text-success" th:text="${userDeleted}"></h4>
+    <h4 class="text-success" th:text="${userUpdated}"></h4>
+    <div class="row">
+        <div class="col">
+
+            <div>
+                <form th:action="@{/admin/showUsersPage/1}">
+                    <input type="hidden" name="sortField" th:value="${sortField}" />
+                    <input type="hidden" name="sortDir" th:value="${sortDir}" />
+
+                    <label>Keyword:</label>
+                    <input type="text" id="keyword" name="keyword" th:value="${keyword}" />
+                    <div id="error" class="text-danger"></div>
+
+                    &nbsp;
+                    <input type="submit" value="Search" id="submit" class="btn btn-primary" />
+                    &nbsp;
+                    <input type="button" value="Clear" class="btn btn-primary" onclick="clearFilter()" />
+
+                </form>
+                <hr/>
+
+            </div>
+            <a th:href="@{/admin/register}" class="btn btn-primary mb-2">Add User</a>
+            <h4 class="text-danger text-center" th:text="${userNotDeleted}"></h4>
+        <table class="table table-bordered table-striped" id="usersTable">
+            <thead>
+            <tr>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=username&sortDir=' + ${reverseSortDir}}">Username</a>
+
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir}}">Firstname</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${reverseSortDir}}">Lastname</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=email&sortDir=' + ${reverseSortDir}}">Email</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=address&sortDir=' + ${reverseSortDir}}">Address</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=age&sortDir=' + ${reverseSortDir}}">Age</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=sex&sortDir=' + ${reverseSortDir}}">Sex</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showUsersPage/' + ${currentPage} + '?sortField=role&sortDir=' + ${reverseSortDir}}">Role</a>
+                </th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user: ${userList}">
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.firstName}"></td>
+                <td th:text="${user.lastName}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.address}"></td>
+                <td th:text="${user.age}"></td>
+                <td th:text="${user.sex}"></td>
+                <td th:text="${user.role}"></td>
+                <td>
+                    <a th:href="@{/admin/updateUserForm(userId=${user.id})}" class="btn btn-info">Update User</a>
+                    <a th:href="@{/admin/deleteUser(userId=${user.id})}" class="btn btn-danger ml-2">Delete User</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    <!--<script>
+        $(document).ready(function() {
+            $("#usersTable").DataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [-1] /* 1st one, start by the right */
+                }]
+            });
+        })
+    </script>-->
+        <div>
+            Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]] &nbsp;
+
+            <a th:if="${currentPage > 1}" th:href="@{'/admin/showUsersPage/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a>
+            <span th:unless="${currentPage > 1}">First</span>
+
+            <a th:if="${currentPage > 1}" th:href="@{'/admin/showUsersPage/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
+            <span th:unless="${currentPage > 1}">Previous</span>
+
+            <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${i != currentPage && i != 0}" th:href="@{'/admin/showUsersPage/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+                        <span th:unless="${i != currentPage && i != 0}">[[${i}]]</span>
+                        &nbsp;&nbsp;
+                    </span>
+
+            <a th:if="${currentPage < totalPages}" th:href="@{'/admin/showUsersPage/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+            <span th:unless="${currentPage < totalPages}">Next</span>
+
+            <a th:if="${currentPage < totalPages}" th:href="@{'/admin/showUsersPage/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+            <span th:unless="${currentPage < totalPages}">Last</span>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+<script type="text/javascript">
+    function clearFilter() {
+        window.location = '/admin/manageUsers';
+    }
+
+    document.querySelector("#submit").addEventListener("click", function(event) {
+
+
+
+        var keyword = document.getElementById("keyword").value;
+        let result = keyword.includes(" ");
+
+        if(result) {
+            document.getElementById('error').innerHTML += 'keyword cannot contain spaces';
+            event.preventDefault();
+        }
+
+    }, false);
+
+
+</script>
+</body>
+</html>

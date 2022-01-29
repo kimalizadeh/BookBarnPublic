@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Books</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>-->
+
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>-->
+
+
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/1.0.1/css/searchPanes.dataTables.min.css"/>-->
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css"/>-->
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="isAnonymous()" th:replace="fragment/header_anonymous :: header"></nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Admin')"  th:replace="fragment/header_auth_admin :: header"></nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Member')" th:replace="fragment/header_auth_member :: header"></nav>
+
+
+    <div class="container">
+
+        <h2>Search Catalog</h2>
+        <div>&nbsp;</div>
+        <div class="row">
+            <div class="col">
+
+                <div>
+                    <form th:action="@{/page/1}">
+                        <input type="hidden" name="sortField" th:value="${sortField}" />
+                        <input type="hidden" name="sortDir" th:value="${sortDir}" />
+                        Keyword:
+                        <input type="text" id="keyword" name="keyword" th:value="${keyword}" />
+                        <div id="error" class="text-danger"></div>
+
+                        <p th:if="${available} == 'true'" th:text="Available">Available</p>
+                        <p th:if="${available} == 'false'">Unavailable</p>
+                        <div th:if="${available} == null">
+
+                        <input type="radio" name="available" th:value="true">Available</br>
+
+                        <input type="radio" name="available"th:value="false">Unavailable</br>
+                        </div>
+
+                        <input type="submit" value="Search" id="submit" class="btn btn-primary" />
+                        &nbsp;
+                        <input type="button" value="Clear" class="btn btn-primary" onclick="clearFilter()"/>
+                    </form>
+                </div>
+                <div>&nbsp;</div>
+                <table class="table table-bordered table-striped" id="books-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            Cover Photo
+                        </th>
+                        <th>
+                            <a th:href="@{'/page/' + ${currentPage} + '?sortField=title&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Title</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/page/' + ${currentPage} + '?sortField=authorFullName&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Author</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/page/' + ${currentPage} + '?sortField=category&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Category</a>
+                        </th>
+                        <th>
+                            <a th:href="@{'/page/' + ${currentPage} + '?sortField=bookType&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Book Type</a>
+                        </th>
+                        <th>
+                            Availability
+                        </th>
+                        <th>
+                            <a th:href="@{'/page/' + ${currentPage} + '?sortField=isbn&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">ISBN</a>
+                        </th>
+                        <th>Book Details</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="book: ${bookList}">
+                        <td><img th:if="*{book.parsedData != null and #strings.length(book.parsedData) > 0}" th:src="@{'data:image/jpeg;base64,'+${book.parsedData}}" width="200"/>
+                            <img th:unless="*{book.parsedData != null and #strings.length(book.parsedData) > 0}" th:src="@{/images/coverphoto.jpg}" width="200"/>
+                        </td>
+                        <td th:text="${book.title}"></td>
+                        <td th:text="${book.authorFullName}"></td>
+                        <td th:text="${book.category}"></td>
+                        <td th:text="${book.bookType}"></td>
+                        <td th:if="${book.isAvailable()}">AVAILABLE</td>
+                        <td th:unless="${book.isAvailable()}">UNAVAILABLE</td>
+                        <td th:text="${book.isbn}"></td>
+                        <td><a th:href="@{/bookDetails(bookId=${book.id})}" class="btn btn-info">View Details</a></td>
+
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div>
+                    Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]] &nbsp;
+
+                    <a th:if="${currentPage > 1}" th:href="@{'/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">First</a>
+                    <span th:unless="${currentPage > 1}">First</span>
+
+                    <a th:if="${currentPage > 1}" th:href="@{'/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Previous</a>
+                    <span th:unless="${currentPage > 1}">Previous</span>
+
+                    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${i != currentPage && i != 0}" th:href="@{'/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">[[${i}]]</a>
+                        <span th:unless="${i != currentPage && i != 0}">[[${i}]]</span>
+                        &nbsp;&nbsp;
+                    </span>
+
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Next</a>
+                    <span th:unless="${currentPage < totalPages}">Next</span>
+
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${available != null ? '&available=' + available : ''}}">Last</a>
+                    <span th:unless="${currentPage < totalPages}">Last</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        function clearFilter() {
+            window.location = '/searchCatalog';
+        }
+        document.querySelector("#submit").addEventListener("click", function(event) {
+            var keyword = document.getElementById("keyword").value;
+            let result = keyword.includes(" ");
+
+            if(result) {
+                document.getElementById('error').innerHTML += 'keyword cannot contain spaces';
+                event.preventDefault();
+            }
+        }, false);
+
+
+    </script>
+
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+
+<!--    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>-->
+
+
+<!--    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>-->
+<!--    <script src="https://cdn.datatables.net/searchpanes/1.0.1/js/dataTables.searchPanes.min.js"></script>-->
+<!--    <script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>-->
+<!--    <script>-->
+<!--        $(document).ready(function() {-->
+<!--            $('#books-table').DataTable({-->
+<!--                dom: 'Plfrtip',-->
+<!--                columnDefs: [-->
+<!--                    {-->
+<!--                        searchPanes: {-->
+<!--                            show: true-->
+<!--                        },-->
+<!--                        targets: [1]-->
+<!--                    },-->
+<!--                    {-->
+<!--                        searchPanes: {-->
+<!--                            show: true-->
+<!--                        },-->
+<!--                        targets: [2]-->
+<!--                    },-->
+<!--                    {-->
+<!--                        searchPanes: {-->
+<!--                            show: true-->
+<!--                        },-->
+<!--                        targets: [3]-->
+<!--                    },-->
+<!--                    {-->
+<!--                        searchPanes: {-->
+<!--                            show: true-->
+<!--                        },-->
+<!--                        targets: [4]-->
+<!--                    },-->
+<!--                    {-->
+<!--                        searchPanes: {-->
+<!--                            show: true-->
+<!--                        },-->
+<!--                        targets: [5]-->
+<!--                    },-->
+<!--                    {-->
+<!--                        searchPanes: {-->
+<!--                            show: false-->
+<!--                        },-->
+<!--                        targets: [0]-->
+<!--                    }-->
+<!--                ]-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+</body>
+</html>

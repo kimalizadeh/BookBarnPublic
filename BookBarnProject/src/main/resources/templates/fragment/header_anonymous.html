@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Register | My Blog</title>
+</head>
+
+<body class="grey lighten-4">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:fragment="header">
+        <a href="/" class="navbar-brand">Book Barn</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2"  id="navbarSupportedContent">
+        <ul id="nav-mobile" class=" logout navbar-nav mr-auto">
+            <li class="white-text"><a  type="button" href="/searchCatalog" class="btn btn-outline-info float-right">Search Catalog</a><span>&nbsp;</span><span>&nbsp;&nbsp;</span></li>
+            <li><span>&nbsp;</span><a href="/login" class="btn btn-outline-info float-right nav-item" >Login</a></li>
+            <!--<li class="nav-item "> or </li>-->
+            <!--<li><a href="/register" class="btn nav-item">Register</a></li>-->
+           <!-- <li class="nav-item "> to rant a book </li>-->
+            <!--<li><form class="form-inline" th:action="@{/register}">
+                <button class="btn btn-outline-primary mr-1 " type="button">Register</button>
+            </form></li>
+            <li><form class="form-inline" th:action="@{/login}">
+                <button class="btn btn-outline-primary mr-1" type="button">Login</button>
+                </form></li>-->
+        </ul>
+    </div>
+</nav>
+<!--<div th:fragment="footer">
+    <footer class="text-center text-white fixed-bottom" style="background-color: #21081a;">-->
+        <!-- Grid container -->
+       <!-- <div class="container p-4"></div>-->
+        <!-- Grid container -->
+
+        <!-- Copyright -->
+       <!-- <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2020 Copyright:
+            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+        </div>-->
+        <!-- Copyright -->
+   <!-- </footer>-->
+</div>
+</body>
+
+</html>

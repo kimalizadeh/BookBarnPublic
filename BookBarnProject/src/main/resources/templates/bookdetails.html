@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${book.title}"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body class="grey lighten-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="isAnonymous()" th:replace="fragment/header_anonymous :: header"></nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Admin')"  th:replace="fragment/header_auth_admin :: header"></nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Member')" th:replace="fragment/header_auth_member :: header"></nav>
+
+
+<div class="container">
+    <h2 th:text="${book.title}"></h2>
+    <hr/>
+
+    <p><img th:if="*{book.parsedData != null and #strings.length(book.parsedData) > 0}" th:src="@{'data:image/jpeg;base64,'+${book.parsedData}}" width="400"/>
+        <img th:unless="*{book.parsedData != null and #strings.length(book.parsedData) > 0}" th:src="@{/images/coverphoto.jpg}" width="400"/>
+    </p>
+
+    <label>Author:</label>
+    <p th:text="${book.authorFullName}"></p>
+
+    <label>Category:</label>
+    <p th:text="${book.category}"></p>
+
+    <label>Book Type:</label>
+    <p th:text="${book.bookType}"></p>
+
+    <label>Description:</label>
+    <p th:text="${book.description}"></p>
+
+    <label>Status:</label>
+    <p> <span th:if="${book.isAvailable()}">Available</span>
+        <span th:unless="${book.isAvailable()}">Unavailable</span>
+    </p>
+
+    <label>Publication Date:</label>
+    <p th:text="${book.publicationDate}"></p>
+
+    <label>ISBN:</label>
+    <p th:text="${book.isbn}"></p>
+
+    <form th:action="@{/member/rentBook}"  th:object="${book}" method="POST">
+
+        <input type="hidden" th:field="*{id}" placeholder="Enter name" class="form-control col-4 mb-4"/>
+        <input type="hidden" th:field="*{title}" placeholder="Enter name" class="form-control col-4 mb-4"/>
+        <input type="hidden" th:field="*{isbn}" placeholder="Enter ISBN" class="form-control col-4 mb-4"/>
+        <input type="hidden" th:field="*{authorFullName}" placeholder="Enter author" class="form-control col-4 mb-4"/>
+        <textarea style="display:none;" th:field="*{description}" placeholder="Enter book description here" class="form-control col-4 mb-4"/>
+        <input type="hidden" th:field="*{category}" placeholder="Enter author" class="form-control col-4 mb-4"/>
+        <input type="hidden" th:field="*{bookType}" placeholder="Enter author" class="form-control col-4 mb-4"/>
+        <input type="hidden" th:field="*{publicationDate}" placeholder="Enter author" class="form-control col-4 mb-4"/>
+        <label>Members who rent books online are entitled to a 1 month rental period.</label>
+        <input sec:authorize="hasRole('ROLE_Member')" th:if="${book.isAvailable()}" class="btn btn btn-primary col-2" type="submit" name="submit" value="Rent book!">
+
+    </form></br>
+
+<!--    <form th:action="@{/rentBook}"  th:object="${book}" method="POST">-->
+
+<!--        <input type="hidden" th:field="*{id}" placeholder="Enter name" class="form-control col-4 mb-4"/>-->
+<!--        <input type="hidden" th:field="*{title}" placeholder="Enter name" class="form-control col-4 mb-4"/>-->
+<!--        <input type="hidden" th:field="*{isbn}" placeholder="Enter ISBN" class="form-control col-4 mb-4"/>-->
+<!--        <input type="hidden" th:field="*{authorFullName}" placeholder="Enter author" class="form-control col-4 mb-4"/>-->
+<!--        <textarea style="display:none;" th:field="*{description}" placeholder="Enter book description here" class="form-control col-4 mb-4"/>-->
+<!--        <input type="hidden" th:field="*{category}" placeholder="Enter author" class="form-control col-4 mb-4"/>-->
+<!--        <input type="hidden" th:field="*{bookType}" placeholder="Enter author" class="form-control col-4 mb-4"/>-->
+<!--        <input type="hidden" th:field="*{publicationDate}" placeholder="Enter author" class="form-control col-4 mb-4"/>-->
+<!--        <input sec:authorize="hasRole('ROLE_Admin')" th:if="${book.isAvailable()}" class="btn btn btn-primary col-2" type="submit" name="submit" value="Rent book for Member!">-->
+
+<!--    </form>-->
+
+    <a sec:authorize="hasRole('ROLE_Admin')" th:if="${book.isAvailable()}" th:href="@{/admin/addRental(bookId=${book.id})}" class="btn btn-info">Rent Book for Member</a>
+
+</div>
+</body>
+</html>

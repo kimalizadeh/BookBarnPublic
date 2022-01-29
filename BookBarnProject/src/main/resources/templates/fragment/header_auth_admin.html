@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+
+<head th:fragment="head">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" th:href="@{/style.css}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <title>Home | My article</title>
+</head>
+
+<body >
+
+  <nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:fragment="header">
+    <a href="/" class="navbar-brand">Book Barn</a>
+    <div  class="navbar-collapse collapse w-100 order-3 dual-collapse2"  id="navbarSupportedContent">
+      <!--<a href="/" class="brand-logo brand-text">Book Barn</a>-->
+      <ul id="nav-mobile" class=" logout navbar-nav mr-auto">
+        <div class="d-flex flex-row-reverse">
+          <li class="white-text"><a type="button" href="/admin/dashboard" class="btn btn-outline-info float-right">Dashboard</a><span>&nbsp;</span></li>
+          <li class="white-text"><a type="button" href="/admin/manageBooks" class="btn btn-outline-info float-right">Manage Books</a><span>&nbsp;</span></li>
+          <li class="white-text"><a  type="button" href="/admin/manageUsers" class="btn btn-outline-info float-right">Manage Users</a><span>&nbsp;</span></li>
+          <li class="white-text"><a  type="button" href="/admin/manageRentals" class="btn btn-outline-info float-right">Manage Rentals</a><span>&nbsp;</span></li>
+          <li class="white-text"><a  type="button" href="/searchCatalog" class="btn btn-outline-info float-right">Search Catalog</a><span>&nbsp;</span></li>
+          <li><form th:action="@{/logout}" method="post" class="">
+            <input class=" btn btn-outline-info float-right " type="submit" value="Logout"/></form>
+            </form>
+        </li>
+          <li style="color: azure">You are logged in as<span>&nbsp</span>
+            <span style="color: azure" th:text="${#authentication.name}+'&nbsp&nbsp'" />
+          </li>
+        </div>
+      </ul>
+    </div>
+  </nav>
+  <div th:fragment="footer">
+    <!-- Footer -->
+    <footer class="page-footer font-small blue">
+
+      <!-- Copyright -->
+      <div class="footer-copyright text-center py-3" style="background-color: #21081a;">© 2020 Copyright:
+        <a href="https://mdbootstrap.com/"> bookbarn.com</a>
+      </div>
+      <!-- Copyright -->
+
+    </footer>
+    <!-- Footer -->
+  </div>
+
+</body>
+
+</html>

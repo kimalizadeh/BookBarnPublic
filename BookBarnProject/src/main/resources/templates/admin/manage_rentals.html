@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Rental</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:replace="fragment/header_auth_admin :: header">
+</nav>
+    <div class="container">
+        <h2>Rentals</h2>
+        <hr/>
+        <h4 class="text-success" th:text="${rentalAdded}"></h4>
+        <h4 class="text-success" th:text="${rentalUpdated}"></h4>
+        <h4 class="text-success" th:text="${rentalDeleted}"></h4>
+        <h4 class="text-danger" th:text="${rentalNotDeleted}"></h4>
+        <div>&nbsp;</div>
+        <div class="row">
+            <div class="col">
+
+                <div>
+                    <form th:action="@{/admin/showRentalsPage/1}" class="row row-cols-lg-auto g-3 align-items-center">
+                        <input type="hidden" name="sortField" th:value="${sortField}" />
+                        <input type="hidden" name="sortDir" th:value="${sortDir}" />
+
+                        <div class="col-12">
+                        <label>Keyword:</label>
+                        <input type="text" id="keyword" name="keyword" th:value="${keyword}"/>
+                        <div id="error" class="text-danger"></div>
+                        <div> </div>
+                        </div>
+                        <div class="col-12">
+                        <input type="submit" value="Search" id="submit" class="btn btn-primary" />
+                        </div>
+                        &nbsp;<div class="col-12">
+                        <input type="button" value="Clear" class="btn btn-primary" onclick="clearFilter()"/>
+                        </div>
+                    </form>
+                </div>
+                <div>&nbsp;</div>
+        <table class="table table-bordered table-striped" id="rental-table">
+            <thead>
+            <tr>
+                <th>Cover Photo</th>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Author
+                </th>
+                <th>
+                    ISBN
+                </th>
+                <th>
+                    Book Type
+                </th>
+                <th>
+                    Rented By
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showRentalsPage/' + ${currentPage} + '?sortField=startDate&sortDir=' + ${reverseSortDir}}">Start Date</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showRentalsPage/' + ${currentPage} + '?sortField=dueDate&sortDir=' + ${reverseSortDir}}">Due Date</a>
+                </th>
+                <th>
+                    <a th:href="@{'/admin/showRentalsPage/' + ${currentPage} + '?sortField=returnDate&sortDir=' + ${reverseSortDir}}">Return Date</a>
+                </th>
+                <th>Availability</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="rental: ${rentalList}">
+                <td><img th:if="*{rental.book.parsedData != null and #strings.length(rental.book.parsedData) > 0}"
+                         th:src="@{'data:image/jpeg;base64,'+${rental.book.parsedData}}" width="200"/>
+                    <img th:unless="*{rental.book.parsedData != null and #strings.length(rental.book.parsedData) > 0}"
+                         th:src="@{/images/coverphoto.jpg}" width="200"/>
+                </td>
+                <td th:text="${rental.book.title}"></td>
+                <td th:text="${rental.book.authorFullName}"></td>
+                <td th:text="${rental.book.isbn}"></td>
+                <td th:text="${rental.book.bookType}"></td>
+                <td th:text="${rental.user.username}"></td>
+                <td th:text="${rental.startDate}"></td>
+                <td th:text="${rental.dueDate}"></td>
+                <td th:text="${rental.returnDate}"></td>
+                <td th:if="${rental.book.isAvailable()}">Available</td>
+                <td th:unless="${rental.book.isAvailable()}">Unavailable</td>
+                <td>
+                    <a th:href="@{/admin/updateRental(rentalId=${rental.id})}" class="btn btn-info ml-2">Update Rental</a>
+                    <span>&nbsp;</span>
+                    <a th:href="@{/admin/deleteRental(rentalId=${rental.id})}" class="btn btn-danger ml-2">Delete Rental</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+                <div>
+                    Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]] &nbsp;
+
+                    <a th:if="${currentPage > 1}" th:href="@{'/admin/showRentalsPage/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a>
+                    <span th:unless="${currentPage > 1}">First</span>
+
+                    <a th:if="${currentPage > 1}" th:href="@{'/admin/showRentalsPage/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
+                    <span th:unless="${currentPage > 1}">Previous</span>
+
+                    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${i != currentPage && i != 0}" th:href="@{'/admin/showRentalsPage/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+                        <span th:unless="${i != currentPage && i != 0}">[[${i}]]</span>
+                        &nbsp;&nbsp;
+                    </span>
+
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/admin/showRentalsPage/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+                    <span th:unless="${currentPage < totalPages}">Next</span>
+
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/admin/showRentalsPage/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+                    <span th:unless="${currentPage < totalPages}">Last</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<script type="text/javascript">
+    function clearFilter() {
+        window.location = '/admin/manageRentals';
+    }
+
+    document.querySelector("#submit").addEventListener("click", function(event) {
+
+
+
+        var keyword = document.getElementById("keyword").value;
+        let result = keyword.includes(" ");
+
+        if(result) {
+            document.getElementById('error').innerHTML += 'keyword cannot contain spaces';
+            event.preventDefault();
+        }
+
+    }, false);
+
+
+</script>
+
+</body>
+</html>

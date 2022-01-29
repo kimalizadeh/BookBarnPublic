@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" th:replace="fragment/header_auth_admin :: header">
+</nav>
+<div class="container">
+    <h2>Welcome Admin to your personal dashboard</h2>
+
+    <!--<p sec:authorize="isAuthenticated()">You are logged in as  <span th:text="${#authentication.name}+'&nbsp'" /></p>-->
+
+    <div class="container">
+        <hr/>
+        <table class="table table-bordered table-striped" id="usersTable">
+            <thead>
+            <tr>
+                <th> Username</th>
+                <th> Firstname </th>
+                <th>Lastname</th>
+                <th>Email </th>
+                <th> Address </th>
+                <th>Age</th>
+                <th>Sex </th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+                <td th:text="${admin.username}"></td>
+                <td th:text="${admin.firstName}"></td>
+                <td th:text="${admin.lastName}"></td>
+                <td th:text="${admin.email}"></td>
+                <td th:text="${admin.address}"></td>
+                <td th:text="${admin.age}"></td>
+                <td th:text="${admin.sex}"></td>
+                <td th:text="${admin.role}"></td>
+                <td>
+                    <a th:href="@{/admin/updateUserForm(userId=${admin.id})}" class="btn btn-info">Update your personal info</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <p> In order to view all users, adding, modifying or delete a user: <a href="/admin/manageBooks">click here</a> </p>
+            <p> In order to view all users, adding, modifying or delete a user: <a href="/admin/manageUsers">click here</a> </p>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.25/datatables.min.js"></script>
+</div>
+</body>
+</html>

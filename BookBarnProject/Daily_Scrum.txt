@@ -1,0 +1,160 @@
+BookBarn DailyScrum 2021/12/09
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  Finished Proposal,Created heroku database, set up github, Create Trello
+2.  Create tables on database
+3.  How to create tables on heroku
+
+Bahar:
+1.  Finished Proposal,Created heroku database, set up github, Create Trello
+2.  Create tables on database
+3.  How to create tables on heroku
+
+BookBarn DailyScrum 2021/12/10
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  Created tables, troubleshooted database connection
+2.  Complete entities, setup spring security
+3.  database maybe?
+
+Bahar:
+1.  Created tables, troubleshooted database connection
+2.  Complete entities, setup spring security
+3.  database maybe?
+
+BookBarn DailyScrum 2021/12/12
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  Configured spring security with roles, add-book, member can borrow book, details page, member dashboard
+2.  Look into file, blob upload and display
+3.  Nothing at the moment
+
+Bahar:
+1.  register page, admin dashboard, delete add and read users by admin
+2.  update users by admin, Thymeleaf header fragment
+3.  how to update
+
+BookBarn DailyScrum 2021/12/13
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  Upload file, display photo and search catalog
+2.  how to retrieve pdf from database
+3.  figure out github conflicts
+
+Bahar:
+1.  admin dashboard for book management, part pf thymeleaf header fragment
+2.  home template and working on thymeleaf
+3.  figuring out which fragments are needed
+
+BookBarn DailyScrum 2021/12/14
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  Displaying the pdf, Start working on manage rental,
+2.  Continue working on manage rental, update trello
+3.  figure out how to get manage rental
+
+Bahar:
+1.  Home template, admin dashboard to get personal info, update trello
+2.  manage personal information by user, update trello
+3.  figure out to give header from fragment to all pages
+
+BookBarn DailyScrum 2021/12/15
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  fixed some bugs, worked on admin manage rentals, updated trello
+2.  setup app on heroku
+3.  database relationships (foreign key constraint)
+
+Bahar:
+1.  fixed bugs, updated trello, worked on manage personal info by user
+2.  setup app on heroku
+3.  database relationships (foreign key constraint), figure out some stuff on boostrap
+
+
+BookBarn DailyScrum 2021/12/16
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  search catalog and sorting, update trello
+2.  decide among add image table or add email
+3.  figure out if search catalog is ok
+
+Bahar:
+1. Add deprecated field to database and keep deleted record in db, update trello
+2. Add search to book and users and rental, Add validation to delete
+3.  figure out how do validation on delete as well as footer
+
+BookBarn DailyScrum 2021/12/17
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  Create pdf table, Modifying add book and update book and add email. validation on keyword
+2.  test sending email on heroku, and debugging
+3.  Nothing for now
+
+Bahar:
+1. Search and sorting on manage user and book, pagination on rental,validation on delete user or book
+2. add pagination to rental and debugging
+3. read more about search
+
+BookBarn DailyScrum 2021/12/18
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  added validation to search catalog, tested emails on heroku, debugging
+2.  more debugging, powerpoint, demo, test app on heroku, trello
+3.  nothing for now
+
+Bahar:
+1. added pagination to rentals, debugging, tested on heroku
+2. debugging, homepage query, powerpoint, trello
+3. nothing for now
+
+BookBarn DailyScrum 2021/12/20
+
+1.	What have you done/not done?
+2.	What are you planning on doing from this scrum to the next?
+3.	Where do I need assistance? What do I need to figure out?
+
+Kim:
+1.  created the power point and practiced the presentation and the demo
+2.  present and submit the project
+3.  nothing
+
+Bahar:
+1.  created the power point and practiced the presentation and the demo
+2.  present and submit the project
+3. nothing for now

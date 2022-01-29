@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" sec:authorize="hasRole('ROLE_Member')" th:replace="fragment/header_auth_member :: header"></nav>
+
+<div class="container">
+    <h2>Welcome to your dashboard</h2>
+    <hr/>
+    <!--<p sec:authorize="isAuthenticated()">You are logged in as  <span th:text="${#authentication.name}+'&nbsp'" /></p>-->
+    <h4 class="text-success" th:text="${bookRented}"></h4>
+    <h4 class="text-success" th:text="${bookReturned}"></h4>
+
+    <h4 class ="text-center">Your Rental History</h4>
+    <div>&nbsp;</div>
+    <div class="row">
+        <div class="col">
+
+            <div>
+                <form th:action="@{/member/dashboard/1}">
+                    <input type="hidden" name="sortField" th:value="${sortField}" />
+                    <input type="hidden" name="sortDir" th:value="${sortDir}" />
+                    <label>Keyword:</label>
+                    <input type="text" id="keyword" name="keyword" required/>
+                    <div id="error" class="text-danger"></div>
+                    &nbsp;
+                    <input type="submit" value="Search" id="submit" class="btn btn-primary"/>
+                    &nbsp;
+                    <input type="button" value="Clear" class="btn btn-primary" onclick="clearFilter()"/>
+                </form>
+            </div>
+            <div>&nbsp;</div>
+
+            <h4 class="text-danger text-center" th:text="${alreadyRented}"></h4>
+    <table class="table table-bordered table-striped" id="rental-table">
+        <thead>
+        <tr>
+            <th>Cover Photo</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Book Type</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>E-Book Link</th>
+            <th>Return E-Book</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rental: ${rentalList}">
+            <td><img th:if="*{rental.book.parsedData != null and #strings.length(rental.book.parsedData) > 0}"
+                     th:src="@{'data:image/jpeg;base64,'+${rental.book.parsedData}}" width="200"/>
+                <img th:unless="*{rental.book.parsedData != null and #strings.length(rental.book.parsedData) > 0}"
+                     th:src="@{/images/coverphoto.jpg}" width="200"/>
+            </td>
+            <td th:text="${rental.book.title}"></td>
+            <td th:text="${rental.book.authorFullName}"></td>
+            <td th:text="${rental.book.isbn}"></td>
+            <td th:text="${rental.book.bookType}"></td>
+            <td th:text="${rental.startDate}"></td>
+            <td th:text="${rental.dueDate}"></td>
+            <td th:text="${rental.returnDate}"></td>
+            <td>
+            <span th:if="*{rental.book.isEbook() == true and rental.returnDate == null}"><a th:href="@{'/member/ebook?id=' + ${rental.book.id}}">View E-Book</a></span>
+                <span th:unless="*{rental.book.isEbook() == true and rental.returnDate == null}">N/A</span>
+            </td>
+            <td>
+                <a th:if="*{rental.book.isEbook() == true and rental.returnDate == null}" th:href="@{/member/returnRental(rentalId=${rental.id})}" class="btn btn-info ml-2">Return</a>
+<!--                <span th:if="*{rental.book.isEbook() == false}">N/A</span>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+            <div>
+                Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]] &nbsp;
+
+                <a th:if="${currentPage > 1}" th:href="@{'/member/dashboard/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a>
+                <span th:unless="${currentPage > 1}">First</span>
+
+                <a th:if="${currentPage > 1}" th:href="@{'/member/dashboard/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
+                <span th:unless="${currentPage > 1}">Previous</span>
+
+                <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${i != currentPage && i != 0}" th:href="@{'/member/dashboard/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+                        <span th:unless="${i != currentPage && i != 0}">[[${i}]]</span>
+                        &nbsp;&nbsp;
+                    </span>
+
+                <a th:if="${currentPage < totalPages}" th:href="@{'/member/dashboard/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+                <span th:unless="${currentPage < totalPages}">Next</span>
+
+                <a th:if="${currentPage < totalPages}" th:href="@{'/member/dashboard/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+                <span th:unless="${currentPage < totalPages}">Last</span>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    function clearFilter() {
+        window.location = '/member/dashboard';
+    }
+
+    document.querySelector("#submit").addEventListener("click", function(event) {
+
+
+
+        var keyword = document.getElementById("keyword").value;
+        let result = keyword.includes(" ");
+
+        if(result) {
+            document.getElementById('error').innerHTML += 'keyword cannot contain spaces';
+            event.preventDefault();
+        }
+
+    }, false);
+
+
+</script>
+</body>
+</html>
